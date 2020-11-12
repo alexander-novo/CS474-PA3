@@ -1,7 +1,6 @@
 .vscode/
 obj/
 out/
-Report/_minted-report
 
 *.aux
 *.log
@@ -16,8 +15,6 @@ Report/_minted-report
 
 Images/*.png
 
-Q1-Correlation/correlate
-Q2-Smoothing/smooth
-Q3-Median/median
-Q4-Unsharp/unsharp
-Q5-Gradient/gradient
+Experiment1/experiment
+Experiment2/experiment
+Experiment3/experiment

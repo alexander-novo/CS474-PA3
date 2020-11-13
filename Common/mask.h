@@ -115,16 +115,19 @@ MaskResult<T>::operator Image() const& {
 
 template <typename T>
 MaskResult<T>::operator Image() && {
-	Image re(_rows, _cols, 255);
+	// If T isn't Image:pixelT, just copy instead of moving
+	// 	Image re(_rows, _cols, 255);
 
-	if (min >= max) calcMinMax(min, max);
+	// 	if (min >= max) calcMinMax(min, max);
 
-#pragma omp parallel for
-	for (unsigned i = 0; i < _rows * _cols; i++) {
-		re.pixels[i] = (data[i] - min) * re.maxVal / (max - min);
-	}
+	// #pragma omp parallel for
+	// 	for (unsigned i = 0; i < _rows * _cols; i++) {
+	// 		re.pixels[i] = (data[i] - min) * re.maxVal / (max - min);
+	// 	}
 
-	return re;
+	// 	return re;
+
+	return MaskResult<T>::operator Image();
 }
 
 // Specialization

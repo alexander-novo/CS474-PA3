@@ -5,12 +5,12 @@ DEPDIR       = $(OBJDIR)/.deps
 DEPFLAGS     = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
 
 # Source files - add more to auto-compile into .o files
-SOURCES      = Common/image.cpp Common/fft.cpp Common/mask.cpp Experiment1/main.cpp Experiment2/main.cpp Experiment3/main.cpp
+SOURCES      = Common/image.cpp Common/fft.cpp Common/mask.cpp Experiment1/main.cpp Experiment2/rect.cpp Experiment2/main.cpp Experiment3/main.cpp
 # Executable targets - add more to auto-make in default 'all' target
-EXEC         = Experiment1/experiment Experiment2/experiment Experiment3/experiment
+EXEC         = Experiment1/experiment Experiment2/spectrum Experiment2/rect Experiment3/experiment
 # Targets required for the homework, spearated by experiment
 REQUIRED_1   = 
-REQUIRED_2   = 
+REQUIRED_2   = out/spectrum_log_rect_512_512_32_32.pgm out/spectrum_log_rect_512_512_64_64.pgm out/spectrum_log_rect_512_512_128_128.pgm
 REQUIRED_3   = 
 REQUIRED_OUT = $(REQUIRED_1) $(REQUIRED_2) $(REQUIRED_3)
 
@@ -27,23 +27,37 @@ all: $(EXEC) $(REQUIRED_OUT)
 Experiment1/experiment: $(OBJDIR)/Experiment1/main.o $(OBJDIR)/Common/image.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-Experiment2/experiment: $(OBJDIR)/Experiment2/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
+Experiment2/spectrum: $(OBJDIR)/Experiment2/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-Experiment3/experiment: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o
+Experiment2/rect: $(OBJDIR)/Experiment2/rect.o $(OBJDIR)/Common/image.o
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+Experiment3/experiment: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 ### Experiment 1 Outputs ###
 
 
 ### Experiment 2 Outputs ###
+out/rect_%.pgm: Experiment2/rect | out
+	Experiment2/rect $(word 1,$(subst _, ,$*)) $(word 2,$(subst _, ,$*)) $(word 3,$(subst _, ,$*)) $(word 4,$(subst _, ,$*)) $@
 
+out/spectrum_rect_%.pgm: Experiment2/spectrum out/rect_%.pgm | out
+	Experiment2/spectrum out/rect_$*.pgm $@
+
+out/spectrum_shifted_rect_%.pgm: Experiment2/spectrum out/rect_%.pgm | out
+	Experiment2/spectrum out/rect_$*.pgm $@ -s
+
+out/spectrum_log_rect_%.pgm: Experiment2/spectrum out/rect_%.pgm | out
+	Experiment2/spectrum out/rect_$*.pgm $@ -s -l
 
 ### Experiment 3 Outputs ###
 
 
 # Figures needed for the report
-report: 
+report: out/rect_512_512_32_32.png out/rect_512_512_64_64.png out/rect_512_512_128_128.png out/spectrum_rect_512_512_32_32.png out/spectrum_shifted_rect_512_512_32_32.png
+report: out/spectrum_log_rect_512_512_32_32.png out/spectrum_log_rect_512_512_64_64.png out/spectrum_log_rect_512_512_128_128.png out/spectrum_log_rect_1024_1024_256_32.png
 
 clean:
 	rm -rf $(OBJDIR)

@@ -1,4 +1,3 @@
-% !TEX options=--shell-escape
 \documentclass[headings=optiontoheadandtoc,listof=totoc,parskip=full]{scrartcl}
 
 \usepackage{amsmath,mathtools}
@@ -59,13 +58,120 @@
 \label{sec:exp-2}
 
 \subsection{Theory}
+The 2-Dimensional Fourier Transform has a property called ``separability'', which shows that it can be computed as nested 1-Dimensional Fourier Transforms. A proof of this fact is given below:
+\begin{equation}
+\label{eq:separability}
+\begin{aligned}
+	\mathcal{F}\{f(x,y)\}(u,v) &= \sum_{x = 0}^{M - 1} \sum_{y = 0}^{N - 1} f(x,y) \exp(-i2\pi\qty(\frac{ux}{M} + \frac{vy}{N}))\\
+		&= \sum_{x = 0}^{M - 1} \sum_{y = 0}^{N - 1} f(x,y) \exp(-i2\pi\frac{ux}{M})\exp(-i2\pi\frac{vy}{N})\\
+		&= \sum_{x = 0}^{M - 1} \qty[\exp(-i2\pi\frac{ux}{M}) \sum_{y = 0}^{N - 1} f(x,y) \exp(-i2\pi\frac{vy}{N})]\\
+		&= \sum_{x = 0}^{M - 1} \exp(-i2\pi\frac{ux}{M}) \mathcal{F}_y\{f(x,y)\}(x,v)\\
+		&= \mathcal{F}_x\{\mathcal{F}_y\{f(x,y)\}(x,v)\}(u,v),
+\end{aligned}
+\end{equation}
+where $\mathcal{F}_x$ is the 1-Dimensional Fourier Transform of the $x$ variable.
 
+Another property of the 2-D Fourier Transform is the translation property:
+\begin{equation}
+	\label{eq:translation}
+	\mathcal{F}\qty{f(x,y)\exp(i2\pi\qty(\frac{u_0x}{M} + \frac{v_0y}{N}))}(u,v) = \mathcal{F}\qty{f(x,y)}(u - u_0,v - v_0),
+\end{equation}
+from which we can see that the Fourier Transform translated half a period in each dimension is
+\begin{equation}
+	\label{eq:translate-phase}
+\begin{aligned}
+		\mathcal{F}\qty{f(x,y)}(u - M/2,v - N/2) &= \mathcal{F}\qty{f(x,y)\exp(i2\pi\qty(\frac{(M / 2)x}{M} + \frac{(N / 2)y}{N}))}(u,v)\\
+			&= \mathcal{F}\qty{f(x,y)\exp(i\pi\qty(x + y))}(u,v)\\
+			&= \mathcal{F}\qty{f(x,y)\exp(i\pi)^{(x + y)}}(u,v)\\
+			&= \mathcal{F}\qty{f(x,y)(-1)^{(x + y)}}(u,v).
+\end{aligned}
+\end{equation}
 
 \subsection{Implementation}
+\Cref{eq:separability} (the separability property) shows that we can compute the 2-Dimensional Fourier Transform of an image by simply reusing our 1-Dimensional Fast Fourier Transform algorithm and applying it first to the columns of an image, and then to the rows. A nice benefit to this is that the Fourier transform of each row (and each column) is independent from each other, so it is trivially parallelizable in shared memory (simply divide the rows evenly among threads and have them calculate each row separately, then do the same for columns - you must have a barrier between calculating columns and rows and it is recommended to use shared memory, as every row calculation depends on every column calculation).
 
+Since the dc term $\mathcal{F}(f(x,y))(0,0)$ and surrounding values dominate the spectrum, they are the most visually interesting values. Unfortunately, in an image, $(0,0)$ is in the corner, so it is difficult to see, and surrounding values are spread across every corner due to the Fourier Transform being periodic in the dimensions of the image (see \cref{fig:spectrum-unshifted}). It makes sense to shift these more important values to the center of the image, so we use \cref{eq:translate-phase} to translate the Fourier Transform by one half period in each direction (half the image) by simply multiplying half the pixels by $-1$ in a checkerboard pattern before taking the Fourier Transform (see \cref{fig:spectrum-shifted}).
+
+As well, the dc term and surrounding values dominates the spectrum by several orders of magnitude, typically. This means that when remapping to $[0, 255]$ for an image, most of the spectrum will be mapped to 0 (or nearby), making it invisible. We can get rid of these orders of magnitude difference by simply applying a logarithmic intensity transformation before converting to an image (see \cref{fig:spectrum-log}).
 
 \subsection{Results and Discussion}
 
+\Cref{fig:rectangle-spectrum-steps} shows the steps detailed above 
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[t]{.22\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/rect_512_512_32_32}
+		\caption{A $512 \times 512$ pixel image with a centered $32 \times 32$ pixel rectangle.}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{.22\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/spectrum_rect_512_512_32_32}
+		\caption{The spectrum of the image.}
+		\label{fig:spectrum-unshifted}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{.22\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/spectrum_shifted_rect_512_512_32_32}
+		\caption{The spectrum shifted so that the dc term is centered on the image.}
+		\label{fig:spectrum-shifted}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{.22\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/spectrum_log_rect_512_512_32_32}
+		\caption{A logarithmic intensity transformation is applied for better visualization.}
+		\label{fig:spectrum-log}
+	\end{subfigure}
+	\caption{A rectangle and its spectrum.}
+	\label{fig:rectangle-spectrum-steps}
+\end{figure}
+
+\Cref{fig:rectangle-spectrum-comparison} compares the spectrums of rectangles of different sizes after applying the above transformations. We can see that each one is the product of sinc functions (the expected outcome, as we went over in class) and as the rectangles get larger, the the sinc functions become higher frequency. This, combined with the symmetry property of the Fourier Transform, indicates that as the frequency of a sinc function gets higher, its Fourier Transform takes on values further from 0, which makes sense.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[t]{.3\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/rect_512_512_32_32}
+		\caption{A $512 \times 512$ pixel image with a centered $32 \times 32$ pixel rectangle.}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{.3\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/rect_512_512_64_64}
+		\caption{A $512 \times 512$ pixel image with a centered $64 \times 64$ pixel rectangle.}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{.3\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/rect_512_512_128_128}
+		\caption{A $512 \times 512$ pixel image with a centered $128 \times 128$ pixel rectangle.}
+	\end{subfigure}
+	\\
+	\begin{subfigure}[t]{.3\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/spectrum_log_rect_512_512_32_32}
+		\caption{The spectrum of above.}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{.3\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/spectrum_log_rect_512_512_64_64}
+		\caption{The spectrum of above.}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{.3\textwidth}
+		\centering
+		\includegraphics[width = \textwidth]{../out/spectrum_log_rect_512_512_128_128}
+		\caption{The spectrum of above.}
+	\end{subfigure}
+	\caption{A comparison of spectrums of rectangles of different sizes.}
+	\label{fig:rectangle-spectrum-comparison}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experiment 3}

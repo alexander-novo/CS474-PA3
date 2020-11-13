@@ -2,6 +2,8 @@
 
 #define _USE_MATH_DEFINES
 
+#include <omp.h>
+
 #include <algorithm>
 #include <cmath>
 
@@ -115,14 +117,105 @@ void fft(std::complex<float> data[], unsigned n, int isign, unsigned byrow) {
 	}
 }
 
+void parallelFFT(std::complex<float> data[], unsigned n, int isign, unsigned byrow) {
+	// Not worth parallelizing.
+	for (unsigned i = 1, j = n / 2; i < (n - 1); i++) {
+		if (j > i) { std::swap(data[i * byrow], data[j * byrow]); }
+
+		// This part is not worth parallelizing - it is required to be done
+		// sequentially, and it is the main workhorse of the loop. Plus, this
+		// algorithm is perhaps the simplest way to do this, so it is not worth
+		// redesigning.
+		unsigned m = n / 2;
+		while (m > 0 && j & m) {
+			j ^= m;
+			m >>= 1;
+		}
+		j |= m;
+	}
+
+#pragma omp parallel num_threads(4)
+	{
+		unsigned numThreads = omp_get_num_threads();
+		unsigned threadNum  = omp_get_thread_num();
+
+		unsigned M;
+		// Perform non-overlapping work, where each thread has its own set of
+		// groups to work with.
+		for (M = 2; M <= n / numThreads; M *= 2) {
+			// The M-th principle root of unity (or its inverse depending on isign)
+			double theta             = isign * (2 * M_PI / M);
+			std::complex<double> W_M = {cos(theta), sin(theta)};
+			std::complex<double> W_Mu(1, 0);
+
+			for (unsigned u = 0; u < M / 2; u++) {
+				// Split the groups up between each thread. i ranges between 0 and the
+				// number of groups per thread, so i_mod corresponds to this thread's
+				// group (by offseting by the first group of each thread).
+				for (unsigned i = u; i < n / numThreads; i += M) {
+					unsigned i_mod = i + n / numThreads * threadNum;
+					unsigned j     = i_mod + M / 2;
+
+					std::complex<double> temp =
+					    std::complex<double>(data[j * byrow]) * W_Mu;
+
+					data[j * byrow] =
+					    std::complex<double>(data[i_mod * byrow]) - temp;
+					data[i_mod * byrow] += temp;
+				}
+
+				W_Mu *= W_M;
+			}
+		}
+
+		// Now perform overlapping work, where threads will only calculate part of a
+		// single group. We need to syncronize every time we change group size since
+		// some threads will need results of subgroups being calculated by other
+		// threads.
+		for (; M <= n; M *= 2) {
+#pragma omp barrier
+
+			unsigned numGroups          = n / M;
+			unsigned numThreadsPerGroup = numThreads / numGroups;
+			unsigned group              = threadNum / numThreadsPerGroup;
+			unsigned threadInGroup      = threadNum % numThreadsPerGroup;
+
+			double theta              = isign * (2 * M_PI / M);
+			double starting_theta     = theta * (n / 2 / numThreads) * threadInGroup;
+			std::complex<double> W_M  = {cos(theta), sin(theta)};
+			std::complex<double> W_Mu = {cos(starting_theta), sin(starting_theta)};
+
+			for (unsigned u = 0; u < (n / 2 / numThreads); u++) {
+				unsigned uMod  = u + (n / 2 / numThreads) * threadInGroup;
+				unsigned i_mod = uMod + M * group;
+				unsigned j     = i_mod + M / 2;
+
+				std::complex<double> temp =
+				    std::complex<double>(data[j * byrow]) * W_Mu;
+
+				data[j * byrow] = std::complex<double>(data[i_mod * byrow]) - temp;
+				data[i_mod * byrow] += temp;
+
+				W_Mu *= W_M;
+			}
+		}
+	}
+}
+
 void fft2D(std::complex<float> data[], unsigned rows, unsigned cols, int isign) {
-	// Compute fft along each row
-	for (unsigned i = 0; i < rows; i++) { fft(data + i * cols, cols, isign); }
-	// Then compute fft along each column
-	for (unsigned i = 0; i < cols; i++) { fft(data + i, rows, isign, cols); }
-	// Then multiply by correction factor
-	float correction = 1 / sqrt(rows * cols);
-	for (unsigned i = 0; i < rows * cols; i++) { data[i] *= correction; }
+#pragma omp parallel
+	{
+// Compute fft along each row
+#pragma omp for
+		for (unsigned i = 0; i < rows; i++) { fft(data + i * cols, cols, isign); }
+// Then compute fft along each column
+#pragma omp for
+		for (unsigned i = 0; i < cols; i++) { fft(data + i, rows, isign, cols); }
+		// Then multiply by correction factor
+		float correction = 1 / sqrt(rows * cols);
+#pragma omp for
+		for (unsigned i = 0; i < rows * cols; i++) { data[i] *= correction; }
+	}
 }
 
 // Implementation of class signature. We'll just adjust the input and output a bit to

@@ -1,11 +1,11 @@
-CXXFLAGS     = -std=c++17 -fopenmp -Ofast -mavx2 -mfma
+CXXFLAGS     = -std=c++17 -g -fopenmp -Ofast -mavx2 -mfma
 OBJDIR       = obj
 DEPDIR       = $(OBJDIR)/.deps
 # Flags which, when added to gcc/g++, will auto-generate dependency files
 DEPFLAGS     = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
 
 # Source files - add more to auto-compile into .o files
-SOURCES      = Common/image.cpp Common/fft.cpp Experiment1/main.cpp Experiment2/main.cpp Experiment3/main.cpp
+SOURCES      = Common/image.cpp Common/fft.cpp Common/mask.cpp Experiment1/main.cpp Experiment2/main.cpp Experiment3/main.cpp
 # Executable targets - add more to auto-make in default 'all' target
 EXEC         = Experiment1/experiment Experiment2/experiment Experiment3/experiment
 # Targets required for the homework, spearated by experiment
@@ -27,7 +27,7 @@ all: $(EXEC) $(REQUIRED_OUT)
 Experiment1/experiment: $(OBJDIR)/Experiment1/main.o $(OBJDIR)/Common/image.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-Experiment2/experiment: $(OBJDIR)/Experiment2/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o
+Experiment2/experiment: $(OBJDIR)/Experiment2/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 Experiment3/experiment: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o

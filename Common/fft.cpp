@@ -222,10 +222,12 @@ void fft2D(std::complex<float> data[], unsigned rows, unsigned cols, int isign) 
 // use our other signatures
 void fft2D(unsigned N, unsigned M, float real_Fuv[], float imag_Fuv[], int isign) {
 	std::complex<float>* data = new std::complex<float>[N * M];
+#pragma omp parallel for
 	for (unsigned i = 0; i < M * N; i++) { data[i] = {real_Fuv[i], imag_Fuv[i]}; }
 
 	fft2D(data, M, N, isign);
 
+#pragma omp parallel for
 	for (unsigned i = 0; i < M * N; i++) {
 		real_Fuv[i] = data[i].real();
 		imag_Fuv[i] = data[i].imag();

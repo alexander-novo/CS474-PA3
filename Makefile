@@ -9,9 +9,9 @@ SOURCES      = Common/image.cpp Common/fft.cpp Common/mask.cpp Experiment1/main.
 # Executable targets - add more to auto-make in default 'all' target
 EXEC         = Experiment1/experiment Experiment2/experiment Experiment3/experiment
 # Targets required for the homework, spearated by experiment
-REQUIRED_1   = 
+REQUIRED_1   = out/part_1a_data.dat out/cos_data.dat out/cos_fft.dat out/rect_fft.dat out/cos_plot.png out/fft_plot.png out/rect_fft_plot.png out/part_1a_plot.png
 REQUIRED_2   = 
-REQUIRED_3   = 
+REQUIRED_3   = out/lenna-mag.pgm out/lenna-phase.pgm
 REQUIRED_OUT = $(REQUIRED_1) $(REQUIRED_2) $(REQUIRED_3)
 
 OBJDIRS      = $(addprefix $(OBJDIR)/, $(dir $(SOURCES)))
@@ -24,23 +24,29 @@ DEPFILES     = $(SOURCES:%.cpp=$(DEPDIR)/%.d)
 all: $(EXEC) $(REQUIRED_OUT)
 
 # Executable Targets
-Experiment1/experiment: $(OBJDIR)/Experiment1/main.o $(OBJDIR)/Common/image.o
+Experiment1/experiment: $(OBJDIR)/Experiment1/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 Experiment2/experiment: $(OBJDIR)/Experiment2/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-Experiment3/experiment: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o
+Experiment3/experiment: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 ### Experiment 1 Outputs ###
+out/%.dat: Experiment1/experiment | out
+	Experiment1/experiment
 
+# Generate plots
+out/%_plot.png: Experiment1/%.plt
+	gnuplot Experiment1/$*.plt
 
 ### Experiment 2 Outputs ###
 
 
 ### Experiment 3 Outputs ###
-
+out/%-mag.pgm out/%-phase.pgm: Experiment3/experiment Images/%.pgm
+	Experiment3/experiment Images/$*.pgm out/$*-mag.pgm out/$*-phase.pgm
 
 # Figures needed for the report
 report: 

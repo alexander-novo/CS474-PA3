@@ -108,13 +108,21 @@ void fft(std::complex<float> data[], unsigned n, int isign, unsigned byrow) {
 				// Calculate value of F(u) = F_even(u) +
 				// F_odd(u) * W_M^u, using the fact that F(u)
 				// and F_even(u) are stored in the same spot
-				data[i * byrow] += temp;
+				data[i * byrow] += (temp);
 			}
 
 			// Calculate W_M^{u + 1} = W_M^u * W_M
 			W_Mu *= W_M;
 		}
 	}
+
+	// Multiply by 1/N factor if performing IFFT
+	if (isign == 1){
+		for (unsigned i = 0; i < n; ++i){
+			data[i] /= n;
+		}
+	}
+	
 }
 
 void parallelFFT(std::complex<float> data[], unsigned n, int isign, unsigned byrow) {

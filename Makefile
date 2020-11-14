@@ -30,14 +30,10 @@ Experiment1/experiment: $(OBJDIR)/Experiment1/main.o $(OBJDIR)/Common/image.o $(
 Experiment2/spectrum: $(OBJDIR)/Experiment2/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-<<<<<<< HEAD
-Experiment3/experiment: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o
-=======
 Experiment2/rect: $(OBJDIR)/Experiment2/rect.o $(OBJDIR)/Common/image.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 Experiment3/experiment: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
->>>>>>> 2f47ef7cac30383cc3da33925f356fff7df474de
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 ### Experiment 1 Outputs ###

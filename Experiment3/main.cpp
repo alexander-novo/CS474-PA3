@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
 
 	MaskResult<float> reconstructed(arg.inputImage.rows, arg.inputImage.cols);
 	// Reconstruct image from inverse transform
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2) reduction(min : min) reduction(max : max)
 	for (unsigned y = 0; y < arg.inputImage.rows; y++) {
 		for (unsigned x = 0; x < arg.inputImage.cols; x++) {
 			// Inverse transform gives complex values, but everything *should* be
@@ -68,10 +68,8 @@ int main(int argc, char** argv) {
 			float realVal = std::round(transform[y * arg.inputImage.cols + x].real());
 			reconstructed[y][x] = realVal;
 
-			if (realVal > max)
-				max = realVal;
-			else if (realVal < min)
-				min = realVal;
+			min = std::min(min, realVal);
+			max = std::max(max, realVal);
 		}
 	}
 

@@ -115,14 +115,6 @@ void fft(std::complex<float> data[], unsigned n, int isign, unsigned byrow) {
 			W_Mu *= W_M;
 		}
 	}
-
-	// Multiply by 1/N factor if performing IFFT
-	if (isign == 1){
-		for (unsigned i = 0; i < n; ++i){
-			data[i] /= n;
-		}
-	}
-	
 }
 
 void parallelFFT(std::complex<float> data[], unsigned n, int isign, unsigned byrow) {
@@ -226,8 +218,8 @@ void fft2D(std::complex<float> data[], unsigned rows, unsigned cols, int isign) 
 	}
 }
 
-// Implementation of class signature. We'll just adjust the input and output a bit to
-// use our other signatures
+// Implementation of class signature. We'll just adjust the input and output a bit
+// to use our other signatures
 void fft2D(unsigned N, unsigned M, float real_Fuv[], float imag_Fuv[], int isign) {
 	std::complex<float>* data = new std::complex<float>[N * M];
 #pragma omp parallel for

@@ -9,8 +9,8 @@ if (!exists("MP_TOP"))    MP_TOP = .9
 if (!exists("MP_xGAP"))   MP_xGAP = 0.12
 if (!exists("MP_yGAP"))   MP_yGAP = 0.07
 
-set terminal png enhanced size 900, 600
-set output 'out/part_1a.png'
+set terminal pdf enhanced
+set output 'out/part_1a.pdf'
 
 set multiplot layout 2,2 columnsfirst title "{/:Bold=15 Result of DFT on f Function}" \
               margins screen MP_LEFT, MP_RIGHT, MP_BOTTOM, MP_TOP spacing screen MP_xGAP, MP_yGAP

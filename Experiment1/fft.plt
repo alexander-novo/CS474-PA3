@@ -6,11 +6,11 @@ if (!exists("MP_LEFT"))   MP_LEFT = .15
 if (!exists("MP_RIGHT"))  MP_RIGHT = .95
 if (!exists("MP_BOTTOM")) MP_BOTTOM = .14
 if (!exists("MP_TOP"))    MP_TOP = .9
-if (!exists("MP_xGAP"))   MP_xGAP = 0.16
+if (!exists("MP_xGAP"))   MP_xGAP = 0.20
 if (!exists("MP_yGAP"))   MP_yGAP = 0.07
 
-set terminal png enhanced size 900, 600
-set output 'out/fft.png'
+set terminal pdf enhanced
+set output 'out/fft.pdf'
 
 set multiplot layout 2,2 columnsfirst title "{/:Bold=15 Result of FFT on Cosine Sample Data}" \
               margins screen MP_LEFT, MP_RIGHT, MP_BOTTOM, MP_TOP spacing screen MP_xGAP, MP_yGAP
@@ -31,7 +31,7 @@ plot "out/cos_fft.dat" using 1:(0):(0):4 with vectors nohead lw 1 lt 2
 
 unset xlabel
 set ylabel 'Imaginary Component'
-set format y "%.0s*10^{%S}"
+set format y "%.0se{%S}"
 plot "out/cos_fft.dat" using 1:(0):(0):3 with vectors nohead lw 1 lt 3
 set xlabel 'samples'
 set ylabel 'Phase'

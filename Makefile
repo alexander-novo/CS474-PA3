@@ -42,12 +42,21 @@ Experiment3/reconstruct: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o $
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 ### Experiment 1 Outputs ###
-out/%.dat: Experiment1/experiment | out
+out/cos_data.dat out/cos_fft.dat out/part_1a_data.dat out/rect_fft.dat: Experiment1/experiment | out
 	Experiment1/experiment
 
 # Generate plots
-out/%_plot.png: Experiment1/%.plt
-	gnuplot Experiment1/$*.plt
+out/cos.pdf: Experiment1/cos.plt | out
+	gnuplot $<
+
+out/fft.pdf: Experiment1/fft.plt out/cos_fft.dat | out
+	gnuplot $<
+
+out/part_1a.pdf: Experiment1/part_1a.plt out/part_1a_data.dat | out
+	gnuplot $<
+
+out/rect_fft.pdf: Experiment1/rect_fft.plt out/rect_fft.dat | out
+	gnuplot $<
 
 ### Experiment 2 Outputs ###
 out/rect_%.pgm: Experiment2/rect | out
@@ -74,6 +83,7 @@ out/%_reconstructed_mag_log.pgm: Experiment3/reconstruct Images/%.pgm | out
 
 
 # Figures needed for the report
+report: out/cos.pdf out/fft.pdf out/part_1a.pdf out/rect_fft.pdf
 report: out/rect_512_512_32_32.png out/rect_512_512_64_64.png out/rect_512_512_128_128.png out/spectrum_rect_512_512_32_32.png out/spectrum_shifted_rect_512_512_32_32.png
 report: out/spectrum_log_rect_512_512_32_32.png out/spectrum_log_rect_512_512_64_64.png out/spectrum_log_rect_512_512_128_128.png out/spectrum_log_rect_1024_1024_256_32.png
 report: out/lenna_reconstructed_phase.png out/lenna_reconstructed_mag.png out/lenna_reconstructed_mag_log.png

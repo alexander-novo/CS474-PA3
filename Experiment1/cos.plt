@@ -1,7 +1,7 @@
 # Set the output to a png file
-set terminal png enhanced size 640,420
+set terminal pdf enhanced
 # The file we'll write to
-set output 'out/cos.png'
+set output 'out/cos.pdf'
 # The graphic title
 set title 'Cos(2{/Symbol p}ux) with u=8 and N=128 samples'
 unset key

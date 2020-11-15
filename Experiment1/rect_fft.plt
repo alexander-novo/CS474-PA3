@@ -9,8 +9,8 @@ if (!exists("MP_TOP"))    MP_TOP = .9
 if (!exists("MP_xGAP"))   MP_xGAP = 0.12
 if (!exists("MP_yGAP"))   MP_yGAP = 0.07
 
-set terminal png enhanced size 900, 600
-set output 'out/rect_fft.png'
+set terminal pdf enhanced
+set output 'out/rect_fft.pdf'
 
 set multiplot layout 2,2 columnsfirst title "{/:Bold=15 Result of FFT on Rect Sample Data}" \
               margins screen MP_LEFT, MP_RIGHT, MP_BOTTOM, MP_TOP spacing screen MP_xGAP, MP_yGAP

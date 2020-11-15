@@ -13,7 +13,7 @@ SOURCES      = Common/image.cpp Common/fft.cpp Common/mask.cpp Experiment1/main.
 # Executable targets - add more to auto-make in default 'all' target
 EXEC         = Experiment1/experiment Experiment2/spectrum Experiment2/rect Experiment3/reconstruct
 # Targets required for the homework, spearated by experiment
-REQUIRED_1   = 
+REQUIRED_1   = out/part_1a_data.dat out/cos_data.dat out/cos_fft.dat out/rect_fft.dat out/cos_plot.png out/fft_plot.png out/rect_fft_plot.png out/part_1a_plot.png
 REQUIRED_2   = out/spectrum_log_rect_512_512_32_32.pgm out/spectrum_log_rect_512_512_64_64.pgm out/spectrum_log_rect_512_512_128_128.pgm
 REQUIRED_3   = out/lenna_reconstructed_phase.pgm out/lenna_reconstructed_mag.pgm
 REQUIRED_OUT = $(REQUIRED_1) $(REQUIRED_2) $(REQUIRED_3)
@@ -29,7 +29,7 @@ DEPFILES     = $(SOURCES:%.cpp=$(DEPDIR)/%.d)
 all: $(EXEC) $(REQUIRED_OUT)
 
 # Executable Targets
-Experiment1/experiment: $(OBJDIR)/Experiment1/main.o $(OBJDIR)/Common/image.o
+Experiment1/experiment: $(OBJDIR)/Experiment1/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 Experiment2/spectrum: $(OBJDIR)/Experiment2/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
@@ -42,7 +42,12 @@ Experiment3/reconstruct: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o $
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 ### Experiment 1 Outputs ###
+out/%.dat: Experiment1/experiment | out
+	Experiment1/experiment
 
+# Generate plots
+out/%_plot.png: Experiment1/%.plt
+	gnuplot Experiment1/$*.plt
 
 ### Experiment 2 Outputs ###
 out/rect_%.pgm: Experiment2/rect | out

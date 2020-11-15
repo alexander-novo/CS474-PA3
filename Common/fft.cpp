@@ -115,13 +115,6 @@ void fft(std::complex<float> data[], unsigned n, int isign, unsigned byrow) {
 			W_Mu *= W_M;
 		}
 	}
-
-	// Multiply by 1/N factor if performing IFFT
-	if (isign == 1){
-		for (unsigned i = 0; i < n; ++i){
-			data[i] /= n;
-		}
-	}
 	
 }
 

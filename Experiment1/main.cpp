@@ -32,6 +32,8 @@ int main(int argc, char** argv) {
 	std::ofstream outFile("out/part_1a_data.dat");
 	for (int i = 0; i < 4; i++)
 	{
+		f[i] = f[i] / std::complex<float>(4, 0);
+
 		std::cout << "F(f): " << f[i] << std::endl;
 		outFile << f_copy[i].real() << " "
 				<< f[i].real() << " "
@@ -73,6 +75,8 @@ int main(int argc, char** argv) {
 	std::ofstream outCosFFT_File("out/cos_fft.dat");
 	for (int i = 0; i < 128; i++)
 	{
+		cos_samples[i] = cos_samples[i] / std::complex<float>(128, 0);
+
 		outCosFFT_File << i << " "
 				<< cos_samples[i].real()    << " "
 				<< cos_samples[i].imag()    << " "
@@ -103,6 +107,8 @@ int main(int argc, char** argv) {
 	std::ofstream outRectFile("out/rect_fft.dat");
 	for (int i = 0; i < 128; i++)
 	{
+		rect_samples[i] = rect_samples[i] / std::complex<float>(128, 0);
+
 		outRectFile << i << " "
 				<< rect_samples[i].real()    << " "
 				<< rect_samples[i].imag()    << " "

@@ -17,7 +17,7 @@ set multiplot layout 2,2 columnsfirst title "{/:Bold=15 Result of FFT on Rect Sa
 
 set format y "%.1f"
 set key box opaque
-set ylabel 'Real Component'
+set ylabel 'Real value'
 set xrange [0:128]
 unset key
 set arrow 1 from 0,0 to 128,0 nohead dt 3
@@ -30,7 +30,7 @@ plot "out/rect_fft.dat" using 1:(0):(0):4 with vectors nohead lw 1 lt 2
 #unset ytics
 
 unset xlabel
-set ylabel 'Imaginary Component'
+set ylabel 'Imaginary value'
 set yrange[-1.2:1.2]
 plot "out/rect_fft.dat" using 1:(0):(0):3 with vectors nohead lw 1 lt 3
 set xlabel 'samples'

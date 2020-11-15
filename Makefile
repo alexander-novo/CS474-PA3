@@ -13,7 +13,7 @@ SOURCES      = Common/image.cpp Common/fft.cpp Common/mask.cpp Experiment1/main.
 # Executable targets - add more to auto-make in default 'all' target
 EXEC         = Experiment1/experiment Experiment2/spectrum Experiment2/rect Experiment3/reconstruct
 # Targets required for the homework, spearated by experiment
-REQUIRED_1   = out/part_1a_data.dat out/cos_data.dat out/cos_fft.dat out/rect_fft.dat out/cos_plot.png out/fft_plot.png out/rect_fft_plot.png out/part_1a_plot.png
+REQUIRED_1   = out/part_1a_data.dat out/cos_data.dat out/cos_fft.dat out/rect_fft.dat out/cos.pdf out/fft.pdf out/rect_fft.pdf out/part_1a.pdf
 REQUIRED_2   = out/spectrum_log_rect_512_512_32_32.pgm out/spectrum_log_rect_512_512_64_64.pgm out/spectrum_log_rect_512_512_128_128.pgm
 REQUIRED_3   = out/lenna_reconstructed_phase.pgm out/lenna_reconstructed_mag.pgm
 REQUIRED_OUT = $(REQUIRED_1) $(REQUIRED_2) $(REQUIRED_3)

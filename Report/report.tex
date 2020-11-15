@@ -6,7 +6,7 @@
 \usepackage[headsepline]{scrlayer-scrpage}
 \usepackage[USenglish]{babel}
 \usepackage{hyperref}
-\usepackage{xurl}
+%\usepackage{xurl}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{subcaption}
@@ -79,7 +79,7 @@ The DFT has the property of being periodic with period N, where N is the number 
 
 In order to implement the DFT, the Fast Fourier Transform (FFT) is used due to its more efficient time complexity of O(N log N) compared to the naive implementation which runs at O(\(N^2\)). The main data structure used to store the sample points is an array of complex values. The data points that are to be plotted, including the magnitude and phase information, are stored in output files. These files are then read by Gnuplot in order to generate the necessary plots and graphs.
 
-In order to sample the cosine function, the interval between each sample was calculated by subtracting the endpoints of one period and dividing that by the number of samples. The ith cosine function sample was then evaluated at x = (i * interval) for 0 \leq i \leq 128.
+In order to sample the cosine function, the interval between each sample was calculated by subtracting the endpoints of one period and dividing that by the number of samples. The ith cosine function sample was then evaluated at x = (i * interval) for $0 \leq i \leq 128$.
 
 \subsection{Results and Discussion}
 

@@ -4,18 +4,23 @@ DEPDIR       = $(OBJDIR)/.deps
 # Flags which, when added to gcc/g++, will auto-generate dependency files
 DEPFLAGS     = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
 
+# Function which takes a list of words and returns a list of unique words in that list
+# https://stackoverflow.com/questions/16144115/makefile-remove-duplicate-words-without-sorting
+uniq         = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
+
 # Source files - add more to auto-compile into .o files
 SOURCES      = Common/image.cpp Common/fft.cpp Common/mask.cpp Experiment1/main.cpp Experiment2/rect.cpp Experiment2/main.cpp Experiment3/main.cpp
 # Executable targets - add more to auto-make in default 'all' target
-EXEC         = Experiment1/experiment Experiment2/spectrum Experiment2/rect Experiment3/experiment
+EXEC         = Experiment1/experiment Experiment2/spectrum Experiment2/rect Experiment3/reconstruct
 # Targets required for the homework, spearated by experiment
 REQUIRED_1   = 
 REQUIRED_2   = out/spectrum_log_rect_512_512_32_32.pgm out/spectrum_log_rect_512_512_64_64.pgm out/spectrum_log_rect_512_512_128_128.pgm
-REQUIRED_3   = 
+REQUIRED_3   = out/lenna_reconstructed_phase.pgm out/lenna_reconstructed_mag.pgm
 REQUIRED_OUT = $(REQUIRED_1) $(REQUIRED_2) $(REQUIRED_3)
 
-OBJDIRS      = $(addprefix $(OBJDIR)/, $(dir $(SOURCES)))
-DEPDIRS      = $(addprefix $(DEPDIR)/, $(dir $(SOURCES)))
+SOURCEDIRS   = $(call uniq, $(dir $(SOURCES)))
+OBJDIRS      = $(addprefix $(OBJDIR)/, $(SOURCEDIRS))
+DEPDIRS      = $(addprefix $(DEPDIR)/, $(SOURCEDIRS))
 DEPFILES     = $(SOURCES:%.cpp=$(DEPDIR)/%.d)
 
 .PHONY: all clean report
@@ -33,7 +38,7 @@ Experiment2/spectrum: $(OBJDIR)/Experiment2/main.o $(OBJDIR)/Common/image.o $(OB
 Experiment2/rect: $(OBJDIR)/Experiment2/rect.o $(OBJDIR)/Common/image.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-Experiment3/experiment: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
+Experiment3/reconstruct: $(OBJDIR)/Experiment3/main.o $(OBJDIR)/Common/image.o $(OBJDIR)/Common/fft.o $(OBJDIR)/Common/mask.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 ### Experiment 1 Outputs ###
@@ -53,11 +58,20 @@ out/spectrum_log_rect_%.pgm: Experiment2/spectrum out/rect_%.pgm | out
 	Experiment2/spectrum out/rect_$*.pgm $@ -s -l
 
 ### Experiment 3 Outputs ###
+out/%_reconstructed_phase.pgm: Experiment3/reconstruct Images/%.pgm | out
+	Experiment3/reconstruct -p Images/$*.pgm $@
+
+out/%_reconstructed_mag.pgm: Experiment3/reconstruct Images/%.pgm | out
+	Experiment3/reconstruct -m Images/$*.pgm $@
+
+out/%_reconstructed_mag_log.pgm: Experiment3/reconstruct Images/%.pgm | out
+	Experiment3/reconstruct -ml Images/$*.pgm $@
 
 
 # Figures needed for the report
 report: out/rect_512_512_32_32.png out/rect_512_512_64_64.png out/rect_512_512_128_128.png out/spectrum_rect_512_512_32_32.png out/spectrum_shifted_rect_512_512_32_32.png
 report: out/spectrum_log_rect_512_512_32_32.png out/spectrum_log_rect_512_512_64_64.png out/spectrum_log_rect_512_512_128_128.png out/spectrum_log_rect_1024_1024_256_32.png
+report: out/lenna_reconstructed_phase.png out/lenna_reconstructed_mag.png out/lenna_reconstructed_mag_log.png
 
 clean:
 	rm -rf $(OBJDIR)

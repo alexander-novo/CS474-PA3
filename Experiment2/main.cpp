@@ -29,14 +29,17 @@ int main(int argc, char** argv) {
 	std::complex<float>* transform =
 	    new std::complex<float>[arg.inputImage.rows * arg.inputImage.cols];
 
+	// Take Fourier Transform, applying shift if specified
 	fft2D(arg.inputImage, transform, arg.shift);
 
+	// Plot the spectrum and apply log intensity transform if specified
 	MaskResult<float> spectrum =
 	    plotSpectrum(transform, arg.inputImage.rows, arg.inputImage.cols);
 	if (arg.logTransform) {
 		spectrum.transform([](const float& x) { return (float) log(1 + x); });
 	}
 
+	// Write spectrum plot out as image
 	arg.outFile << (Image) spectrum;
 }
 

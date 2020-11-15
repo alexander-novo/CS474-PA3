@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <functional>
 
 #include "image.h"
 
@@ -26,7 +27,8 @@ public:
 	 *                       and a minimum at the other end point. All monotonic
 	 *                       transformations have this property.
 	 */
-	MaskResult<T>& transform(T (*transformation)(const T&), bool ivp = true);
+	MaskResult<T>& transform(std::function<T(const T&)> transformation,
+	                         bool ivp = true);
 
 	T* const& data       = _data;
 	const unsigned& rows = _rows;
@@ -145,7 +147,8 @@ const T* MaskResult<T>::operator[](unsigned i) const {
 }
 
 template <typename T>
-MaskResult<T>& MaskResult<T>::transform(T (*transformation)(const T&), bool ivp) {
+MaskResult<T>& MaskResult<T>::transform(std::function<T(const T&)> transformation,
+                                        bool ivp) {
 #pragma omp parallel for
 	for (unsigned i = 0; i < _rows * _cols; i++) {
 		data[i] = transformation(data[i]);

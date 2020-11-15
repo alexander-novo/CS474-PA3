@@ -50,7 +50,7 @@ void parallelFFT(std::complex<float> data[], unsigned n, int isign,
 void fft2D(std::complex<float> data[], unsigned rows, unsigned cols, int isign);
 
 /**
- * 2 Dimensional Fast Fourier Transform. Signature for class purposes
+ * 2 Dimensional Fast Fourier Transform. Signature for class purposes.
  *
  * @param[in]     N        Number of columns of data. Must be a power of 2.
  * @param[in]     M        Number of rows of data. Must be a power of 2.

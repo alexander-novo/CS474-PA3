@@ -30,4 +30,6 @@ set title 'Imaginary Component'
 plot "out/part_1a_data.dat" using 1:(0):(0):3 with vectors noborder head lt 3 size .2,20,45 fixed
 set xlabel 'x'
 set title 'Phase'
+set yrange [-3.14159:3.14159]
+set ytics ('-{/Symbol p}' -pi, '-{/Symbol p}/2' -pi / 2, '0' 0, '{/Symbol p}/2' pi / 2, '{/Symbol p}' pi)
 plot "out/part_1a_data.dat" using 1:(0):(0):5 with vectors noborder head lt 4 size .2,20,45 fixed

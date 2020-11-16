@@ -33,5 +33,6 @@ set title 'Imaginary value'
 plot "out/cos_fft.dat" using 1:(0):(0):3 with vectors nohead lw 1 lt 3
 set xlabel 'samples'
 set title 'Phase'
+set yrange [-3.14159:3.14159]
 set ytics ('-{/Symbol p}' -pi, '-{/Symbol p}/2' -pi / 2, '0' 0, '{/Symbol p}/2' pi / 2, '{/Symbol p}' pi)
 plot "out/cos_fft.dat" using 1:(0):(0):5 with vectors nohead lw 1 lt 4

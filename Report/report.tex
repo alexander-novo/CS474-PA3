@@ -29,7 +29,7 @@
 
 \title{Programming Assignment 3}
 \subtitle{CS 474\\\url{https://github.com/alexander-novo/CS474-PA3}}
-\author{Alexander Novotny\\50\% Work \and Matthew Page\\50\% Work}
+\author{Alexander Novotny\\50\% Work\\\Cref{sec:exp-2} and code for \cref{sec:exp-3} \and Matthew Page\\50\% Work\\\Cref{sec:exp-1} and report for \cref{sec:exp-3}}
 \date{Due: November 16, 2020 \\ Submitted: \today}
 
 \begin{document}
@@ -252,11 +252,11 @@ The contributions of the magnitude and phase components of each frequency can be
 
 \subsection{Implementation}
 
-The implementation of this experiment consists of a single program that first reads in the input and output image paths, along with various options for generating the magnitude and phase images. The main algorithm consists of performing the 2D FFT on the input image. An array of complex<float> type is used to store the results of the DFT. Next the magnitude or phase is removed using the above equations, and the inverse 2D FFT is performed to generate the resulting image. If specified, a log transformation is applied to the output image to improve visualization.
+The implementation of this experiment consists of a single program that first reads in the input and output image paths, along with various options for generating the magnitude and phase images. The main algorithm consists of performing the 2D FFT on the input image. An array of \texttt{complex<float>} type is used to store the results of the DFT. Next the magnitude or phase is removed using the above equations, and the inverse 2D FFT is performed to generate the resulting image. If specified, a log transformation is applied to the output image to improve visualization.
 
 \subsection{Results and Discussion}
 
-After performing the DFT on the lenna.pgm image, the magnitude and phase components of the image were analyzed. After setting the phase component to zero, the resulting image consists of a series of magnitudes that do not give any useful information on the general structure of the image. Figure 7 demonstrates this effect of removing phase information from the image. Conversely, figure 7 shows the original image with the magnitude information removed. Unlike the zero-phase image, there is much more information on the general structure of the image, including edge information. However, there is not much useful information on the strength of each pixel.
+After performing the DFT on the lenna.pgm image, the magnitude and phase components of the image were analyzed. After setting the phase component to zero, the resulting image consists of a series of magnitudes that do not give any useful information on the general structure of the image. \Cref{fig:lenna_mag_phase} demonstrates this effect of removing phase information from the image. Conversely, \cref{fig:lenna_mag_phase} shows the original image with the magnitude information removed. Unlike the zero-phase image, there is much more information on the general structure of the image, including edge information. However, there is not much useful information on the strength of each pixel.
 
 \begin{figure}[ht]
 	\centering

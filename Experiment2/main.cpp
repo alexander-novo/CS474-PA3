@@ -102,7 +102,7 @@ void printHelp() {
 	          << "(2) Print this help menu\n\n"
 	          << "OPTIONS\n"
 	          << "  -s  Shift the fourier transform to center its period\n"
-	          << "      on the center of the image."
+	          << "      on the center of the image.\n"
 	          << "  -l  Apply a logarithmic intensity transformation to the\n"
 	          << "      resulting image, allowing for better visualisation of\n"
 	          << "      the outer edges of the period.\n";

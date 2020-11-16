@@ -23,7 +23,8 @@ Usage: spectrum <input image> <output image> [options]   (1)
 
 OPTIONS
   -s  Shift the fourier transform to center its period
-      on the center of the image.  -l  Apply a logarithmic intensity transformation to the
+      on the center of the image.
+  -l  Apply a logarithmic intensity transformation to the
       resulting image, allowing for better visualisation of
       the outer edges of the period.
 ```

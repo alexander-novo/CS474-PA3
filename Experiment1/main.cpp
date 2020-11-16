@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 		f[i] = f[i] / std::complex<float>(4, 0);
 
 		std::cout << "F(f): " << f[i] << std::endl;
-		outFile << f_copy[i].real() << " "
+		outFile << i << " "
 				<< f[i].real() << " "
 				<< f[i].imag() << " "
 				<< std::abs(f[i]) << " "

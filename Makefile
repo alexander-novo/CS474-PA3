@@ -1,4 +1,4 @@
-CXXFLAGS     = -std=c++17 -g -fopenmp -Ofast -mavx2 -mfma
+CXXFLAGS     = -std=c++14 -g -fopenmp -Ofast -mavx2 -mfma
 OBJDIR       = obj
 DEPDIR       = $(OBJDIR)/.deps
 # Flags which, when added to gcc/g++, will auto-generate dependency files
@@ -46,7 +46,7 @@ out/cos_data.dat out/cos_fft.dat out/part_1a_data.dat out/rect_fft.dat: Experime
 	Experiment1/experiment
 
 # Generate plots
-out/cos.pdf: Experiment1/cos.plt | out
+out/cos.pdf: Experiment1/cos.plt out/cos_data.dat | out
 	gnuplot $<
 
 out/fft.pdf: Experiment1/fft.plt out/cos_fft.dat | out

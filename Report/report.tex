@@ -49,16 +49,16 @@
 The Discrete Fourier Transform (DFT) is defined as a transformation that converts a finite sequence of complex values from the time or spatial domain into the frequency domain. Mathematically, the DFT is defined as 
 
     \[
-    	F(u) = \frac{1}{N}\sum_{x=0}^{N-1} f(x) \exp(\frac{-j2\pi ux}{N})
+    	\mathcal{F}\{f(x)\}(u) = \sum_{x=0}^{N-1} f(x) \exp(\frac{-i2\pi ux}{N})
     \]
 
 The DFT is a generalization of the continuous Fourier Transform, which transforms a continuous function from the time domain to the frequency domain. The DFT can be interpreted as transforming a sequence of real values into a linear combination of complex exponential waves, or equivalently cosine and sine waves. In order to return the values into the time domain, the inverse DFT can be used, which is defined as
 
     \[
-    	f(x) = \sum_{u=0}^{N-1} F(u) \exp(\frac{j2\pi ux}{N})
+    	\mathcal{F}^{-1}\{F(u)\}(x) = \frac{1}{N}\sum_{u=0}^{N-1} F(u) \exp(\frac{i2\pi ux}{N})
     \]
 
-The main benefit of the DFT stems from the ability to view the frequency information of a sequence of discrete values. This is particularly useful in fields such as spectral analysis and signal processing, as it allows for the removal of undesired or noisy frequencies from the data, which produces a smoother signal. The DFT can be generalized into two dimensions for use with any 2D function, including 2D images when viewed as a function f(x, y).
+The main benefit of the DFT stems from the ability to view the frequency information of a sequence of discrete values. This is particularly useful in fields such as spectral analysis and signal processing, as it allows for the removal of undesired or noisy frequencies from the data, which produces a smoother signal. The DFT can be generalized into two dimensions for use with any 2D function, including 2D images when viewed as a function $f(x, y)$.
 
 In order to perform the DFT on a continuous function, the function must first be sampled into a finite sequence of discrete, equally spaced values. This is equivalent to multiplying the continuous function by a series of equally spaced impulse functions, which can be defined as 
 
@@ -68,52 +68,52 @@ In order to perform the DFT on a continuous function, the function must first be
 
 where \(\Delta x\) is the interval between each sample. When sampling from a distribution such as the Gaussian distribution it is important to consider the limits of the sampling values in order to ensure the full curve is represented during the DFT operation.
 
-The DFT has the property of being periodic with period N, where N is the number of samples. In order to view the full period, it is necessary to shift the DFT by N/2. This can be achieved using the property 
+The DFT has the property of being periodic with period $N$, where $N$ is the number of samples. In order to view the full period, it is necessary to shift the DFT by $N/2$. This can be achieved using the property 
 
         \[
-        	f(x)(-1)^x \leftrightarrow F(u-N/2)
+        	f(x)(-1)^x \Leftrightarrow F(u-N/2)
         \]
 
 This step is necessary for the one-dimensional DFT as well as the two-dimensional DFT when visualization of the frequency domain is required. In the case of images, other transformations such as logarithmic scaling of the pixel values may be necessary as well.
 
 \subsection{Implementation}
 
-In order to implement the DFT, the Fast Fourier Transform (FFT) is used due to its more efficient time complexity of O(N log N) compared to the naive implementation which runs at O(\(N^2\)). The main data structure used to store the sample points is an array of complex values. The data points that are to be plotted, including the magnitude and phase information, are stored in output files. These files are then read by Gnuplot in order to generate the necessary plots and graphs.
+In order to implement the DFT, the Fast Fourier Transform (FFT) is used due to its more efficient time complexity of $\mathcal O(N \log N)$ compared to the naive implementation which runs at $\mathcal O(N^2)$. The main data structure used to store the sample points is an array of complex values. The data points that are to be plotted, including the magnitude and phase information, are stored in output files. These files are then read by Gnuplot in order to generate the necessary plots and graphs.
 
-In order to sample the cosine function, the interval between each sample was calculated by subtracting the endpoints of one period and dividing that by the number of samples. The i-th cosine function sample was then evaluated at x = (i * interval) for $0 \leq i < 128$.
+In order to sample the cosine function, the interval between each sample was calculated by subtracting the endpoints of one period and dividing that by the number of samples. The $k$-th cosine function sample was then evaluated as $y_k = \cos(2\pi u k \Delta x)$ for $0 \leq k < 128$, $u = 8$, and $\Delta x = \frac{1}{128}$.
 
 \subsection{Results and Discussion}
 
-Figure 1 showcases the results of performing the DFT on the function f sample data. According to the results, the real part of the first sample remains positive and the last three samples become negative. The DFT also introduces imaginary values to two of the samples. The magnitudes all remain positive as expected, and according to the phase plot the phase value flips sign for the second value of 4 in f.
+\Cref{fig:part_1a} showcases the results of performing the DFT on the function $f$ sample data. According to the results, the real part of the first sample remains positive and the last three samples become negative. The DFT also introduces imaginary values to two of the samples. The magnitudes all remain positive as expected, and according to the phase plot the phase value flips sign for the second value of 4 in $f$.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=.6\textwidth]{../out/part_1a}
-	\caption{The result of performing the DFT on the sample data of the function f.}
+	\includegraphics[width=.8\textwidth]{../out/part_1a}
+	\caption{The result of performing the DFT on the sample data of the function $f$.}
 	\label{fig:part_1a}
 \end{figure}
 
-The cosine function along with its samples are shown in figure 2. After performing the DFT on the cosine sample data, the results were plotted in figure 3. According to the real component, the two non-zero values offset by 8 samples from the shifted center of the period represent the frequency of the cosine function, which is also 8. The imaginary values are all essentially zero as expected, and hence the magnitude corresponds to the absolute value of the real values. The phase also properly corresponds to the cyclical nature of the cosine function.
+The cosine function along with its samples are shown in \cref{fig:cos}. After performing the DFT on the cosine sample data, the results were plotted in \cref{fig:fft}. According to the real component, the two non-zero values offset by 8 samples from the shifted center of the period represent the frequency of the cosine function, which is also 8. The imaginary values are all essentially zero as expected, and hence the magnitude corresponds to the absolute value of the real values. The phase also properly corresponds to the cyclical nature of the cosine function.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=.6\textwidth]{../out/cos}
-	\caption{The given cosine was sampled along 128 points within its first period.}
+	\includegraphics[width=.8\textwidth]{../out/cos}
+	\caption{The given cosine was sampled along 128 points within its first $u = 8$ periods.}
 	\label{fig:cos}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=.6\textwidth]{../out/fft}
+	\includegraphics[width=.75\textwidth]{../out/fft}
 	\caption{The result of performing the DFT on the cosine sample data.}
 	\label{fig:fft}
 \end{figure}
 
-Lastly figure 4 shows similar DFT data for the Rect function. Similarly to the cosine function, the imaginary values of the DFT are zero. However, the real values seem to follow the general shape of a discrete sinc function as expected. Since the imaginary parts of the frequencies are zero, the magnitude of the transformed Rect function corresponds to taking the absolute value of the real values.
+Lastly, \cref{fig:rect_fft} shows similar DFT data for the Rect function. Similarly to the cosine function, the imaginary values of the DFT are close to zero (but large enough to show a difference in the phase). However, the real values seem to follow the general shape of a discrete sinc function as expected. Since the imaginary parts of the frequencies are zero, the magnitude of the transformed Rect function corresponds to taking the absolute value of the real values.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=.6\textwidth]{../out/rect_fft}
+	\includegraphics[width=.75\textwidth]{../out/rect_fft}
 	\caption{The result of performing the DFT on the Rect sample data.}
 	\label{fig:rect_fft}
 \end{figure}
@@ -260,9 +260,10 @@ After performing the DFT on the lenna.pgm image, the magnitude and phase compone
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.35\textwidth]{../out/lenna_reconstructed_mag_log}
-	\includegraphics[width=.35\textwidth]{../out/lenna_reconstructed_phase}
-	\caption{The result of removing the phase (left) and magnitude (right) component from the original lenna.pgm image.}
+	\includegraphics[width=.3\textwidth]{../out/lenna_reconstructed_mag} \quad
+	\includegraphics[width=.3\textwidth]{../out/lenna_reconstructed_mag_log} \quad
+	\includegraphics[width=.3\textwidth]{../out/lenna_reconstructed_phase}
+	\caption{The result of removing the phase (left) and magnitude (right) component from the original \texttt{lenna.pgm} image. The center image is the result of applying a logarithmic intensity transformation to the reconstructed image without phase information to improve contrast.}
 	\label{fig:lenna_mag_phase}
 \end{figure}
 

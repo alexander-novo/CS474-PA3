@@ -1,6 +1,5 @@
 // Experiment3/main.cpp
 #include <cmath>
-#include <complex>
 #include <cstring>
 #include <fstream>
 #include <iostream>

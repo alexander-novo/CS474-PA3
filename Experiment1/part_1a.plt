@@ -18,20 +18,20 @@ set multiplot layout 2,2 columnsfirst title "{/:Bold=15 Result of DFT on f Funct
 set format y "%.1f"
 set key box opaque
 set ylabel 'Real Component'
-set xrange [0:8]
+set xrange [-1:4]
 unset key
-set arrow 1 from 0,0 to 8,0 nohead dt 3
+set arrow 1 from -1,0 to 4,0 nohead dt 3
 
-plot "out/part_1a_data.dat" using 1:(0):(0):2 with vectors filled head lw 3 lt 1
+plot "out/part_1a_data.dat" using 1:(0):(0):2 with vectors noborder head lt 1 size .2,20,45 fixed
 set xlabel 'x'
 set ylabel 'Magnitude'
-plot "out/part_1a_data.dat" using 1:(0):(0):4 with vectors filled head lw 3 lt 2
+plot "out/part_1a_data.dat" using 1:(0):(0):4 with vectors noborder head lt 2 size .2,20,45 fixed
 
 #unset ytics
 
 unset xlabel
 set ylabel 'Imaginary Component'
-plot "out/part_1a_data.dat" using 1:(0):(0):3 with vectors filled head lw 3 lt 3
+plot "out/part_1a_data.dat" using 1:(0):(0):3 with vectors noborder head lt 3 size .2,20,45 fixed
 set xlabel 'x'
 set ylabel 'Phase'
-plot "out/part_1a_data.dat" using 1:(0):(0):5 with vectors filled head lw 3 lt 4
+plot "out/part_1a_data.dat" using 1:(0):(0):5 with vectors noborder head lt 4 size .2,20,45 fixed

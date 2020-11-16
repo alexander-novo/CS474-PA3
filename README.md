@@ -5,6 +5,48 @@ A Makefile is provided in the root directory which makes all executables and ima
 
 The only prerequisites for default targets (anything required for the homework) are a working `g++` on the path which supports C++ 14 and OpenMP.
 
+## Running Executables
+
+### Experiment 1
+`experiment` - will automatically run and generate needed outputs
+
+### Experiment 2
+`rect <image height> <image width> <rectangle height> <rectangle width> <output file>` - Will generate an image of the specified dimensions with a centered rectangle of the specified dimensions. See additional target below.
+
+```
+Usage: spectrum <input image> <output image> [options]   (1)
+   or: spectrum -h                                       (2)
+
+(1) Take an image file as input, and output the spectrum
+    of its fourier transform.
+(2) Print this help menu
+
+OPTIONS
+  -s  Shift the fourier transform to center its period
+      on the center of the image.  -l  Apply a logarithmic intensity transformation to the
+      resulting image, allowing for better visualisation of
+      the outer edges of the period.
+```
+
+### Experiment 3
+```
+Usage: reconstruct -p  <input image> <output image>          (1)
+   or: reconstruct -m  <input image> <output image>          (2)
+   or: reconstruct -ml <input image> <output image>          (3)
+   or: reconstruct -h                                        (4)
+
+(1) (phase-only) Take an image file as input, calculate
+    Fourier Transform, set magnitude to 0, and then reconstruct
+    the image through inverse Fourier Transform.
+(2) (magnitude-only) Take an image file as input, calculate
+    Fourier Transform, set phase to 0, and then reconstruct
+    the image through inverse Fourier Transform.
+(3) (magnitude-only with logarithmic inenstiy transformation)
+    Same as (2) but a logarithmic intensity transformation
+    is applied, allowing to see dark details.
+(4) Print this help menu
+```
+
 ## Building the report
 The Makefile does not have a target which generates the report, since different people like to use different engines to generate reports from `.tex` files. I recommend using `pdflatex` from either [TeX Live](https://www.tug.org/texlive/) on Linux or [MiKTeX](https://miktex.org/) on Windows.
 

@@ -7,11 +7,11 @@
 #include "../Common/fft.h"
 
 int main(int argc, char** argv) {
-	if (argc != 6) {
-		std::cout << "Too few arguments!" << std::endl
+	if (argc < 6) {
+		std::cout << "Too few arguments!\n\n"
 		          << "rect <image height> <image width> <rectangle height> "
-		             "<rectangle width> <output file>"
-		          << std::endl;
+		             "<rectangle width> <output file>\n";
+		return 1;
 	}
 
 	unsigned imageHeight = strtoul(argv[1], nullptr, 10),
